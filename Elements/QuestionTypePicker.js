@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
-import {View, Alert, Picker} from 'react-native'
-import {Text} from 'react-native-elements'
+import {View, ScrollView, TextInput} from 'react-native'
+import {Text, Button, CheckBox} from 'react-native-elements'
+import {FormLabel, FormInput, FormValidationMessage} from 'react-native-elements'
 import ModalSelector from 'react-native-modal-selector'
 
 export default class QuestionTypePicker
@@ -40,7 +41,7 @@ export default class QuestionTypePicker
                     }
                     else if(`${option.label}`==='Essay')
                     {
-                        this.props.navigation.navigate("MultipleChoiceQuestionWidget", {widgetType: `${option.label}`});
+                        this.props.navigation.navigate("EssayQuestionWidget", {widgetType: `${option.label}`});
                     }
                     else if(`${option.label}`==='True or false')
                     {
@@ -54,7 +55,7 @@ export default class QuestionTypePicker
                 }/>
         }
         else {
-            return <Text>Hi Assignment</Text>
+            return this.props.navigation.navigate("AssignmentWidget");
         }
     }
 

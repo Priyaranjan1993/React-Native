@@ -16,7 +16,7 @@ class LessonList extends Component {
         const {navigation} = this.props;
         const courseId = navigation.getParam("courseId");
         const moduleId = navigation.getParam("moduleId");
-        fetch("http://192.168.43.82:8080/api/course/module/lesson/"+courseId+"/"+moduleId)
+        fetch("http://192.168.0.101:8080/api/course/module/lesson/"+courseId+"/"+moduleId)
             .then(response => (response.json()))
             .then((lessons) => {
                 this.setState({lessons: lessons})

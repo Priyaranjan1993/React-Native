@@ -22,12 +22,6 @@ class MultipleChoiceQuestionWidget extends React.Component {
         };
     }
 
-    /*
-        componentDidMount(){
-
-        }
-    */
-
     updateForm(newState) {
         this.setState(newState);
     }

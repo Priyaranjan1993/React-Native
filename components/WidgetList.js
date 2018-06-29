@@ -20,7 +20,7 @@ class WidgetList extends Component {
     componentDidMount() {
         const {navigation} = this.props;
         const lessonId = navigation.getParam("lessonId");
-        fetch("http://192.168.43.82:8080/api/lesson/" + lessonId + "/widget")
+        fetch("http://192.168.0.101:8080/api/lesson/" + lessonId + "/widget")
             .then(response => (response.json()))
             .then(widgets => this.setState({widgets}))
     }
@@ -37,23 +37,10 @@ class WidgetList extends Component {
                     data={data}
                     initValue="Select widget type!"
                     onChange={(option) => {
-                        //alert(`${option.label} (${option.key}) nom nom nom`);
                         this.setState({widgetType: `${option.label}`});
                         this.props.navigation.navigate("QuestionTypePicker", {widgetType: `${option.label}`});
                     }
                     }/>
-
-                <Picker
-                    selectedValue={this.state.widgetType}
-                    onValueChange={(itemValue, itemIndex) => {
-                        console.log("ItemValue -- " + itemValue);
-                        console.log("itemIndex ---- " + itemIndex);
-                        this.setState({widgetType: itemValue});
-                        this.props.navigation.navigate("QuestionTypePicker", {widgetType: itemValue})
-                    }}>
-                    <Picker.Item value="E" label="Eeete"/>
-                    <Picker.Item value="A" label="Assignment"/>
-                </Picker>
 
                 {this.state.widgets.map(
                     (widget, index) => (
