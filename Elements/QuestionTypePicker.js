@@ -30,7 +30,7 @@ export default class QuestionTypePicker
     displayAssignmentOrExamOptions() {
         let index = 0;
         const data = [
-            {key: index++, label: 'Muliple Choice'},
+            {key: index++, label: 'Multiple Choice'},
             {key: index++, label: 'Essay'},
             {key: index++, label: 'True or false'},
             {key: index++, label: 'Fill in the blanks'}
@@ -40,8 +40,9 @@ export default class QuestionTypePicker
                 data={data}
                 initValue="Select Exam type!"
                 onChange={(option) => {
-                    if (`${option.label}` === 'Muliple Choice') {
-                        this.props.navigation.navigate("MultipleChoiceQuestionWidget", {widgetType: `${option.label}`});
+                    if (`${option.label}` === 'Multiple Choice') {
+                        this.props.navigation.navigate("MultipleChoiceQuestionWidget", {widgetType: `${option.label}`,
+                            lessonId:this.state.lessonId});
                     }
                     else if (`${option.label}` === 'Essay') {
                         this.props.navigation.navigate("EssayQuestionWidget", {widgetType: `${option.label}`,
@@ -52,7 +53,8 @@ export default class QuestionTypePicker
                             lessonId:this.state.lessonId});
                     }
                     else if (`${option.label}` === 'Fill in the blanks') {
-                        this.props.navigation.navigate("MultipleChoiceQuestionWidget", {widgetType: `${option.label}`});
+                        this.props.navigation.navigate("MultipleChoiceQuestionWidget", {widgetType: `${option.label}`,
+                            lessonId:this.state.lessonId});
                     }
                 }
                 }/>

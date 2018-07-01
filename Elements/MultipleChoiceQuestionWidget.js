@@ -3,13 +3,20 @@ import {View, ScrollView, StyleSheet, TextInput} from 'react-native'
 import {Text, Button, CheckBox} from 'react-native-elements'
 import {FormLabel, FormInput, FormValidationMessage} from 'react-native-elements'
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
+import ToggleSwitch from 'toggle-switch-react-native'
+import AnimatedHideView from 'react-native-animated-hide-view';
+import WidgetService from '../Services/WidgetService';
 
 class MultipleChoiceQuestionWidget extends React.Component {
     static navigationOptions = {title: "Multiple Choices"};
 
     constructor(props) {
         super(props);
+        const lessonId = this.props.navigation.getParam("lessonId");
+        this.createMultipleChoice = this.createMultipleChoice.bind(this);
+        this.widgetService = WidgetService.instance;
         this.state = {
+            lessonId: lessonId,
             title: '',
             description: '',
             points: 0,
@@ -20,6 +27,8 @@ class MultipleChoiceQuestionWidget extends React.Component {
             counter: 0, arr: [],
             optionVal: 0,
             radioButton: [],
+            userRightChoice:0,
+            multipleChoice: {title: '', points: '', description: '',options:[], correctOption:1},
             isOnDefaultToggleSwitch: false
         };
     }
@@ -51,7 +60,21 @@ class MultipleChoiceQuestionWidget extends React.Component {
     }
 
     change() {
+        let newOptions = [];
         this.setState({optionsFiltered2: this.state.arr});
+        this.state.arr.map((x) => (
+            newOptions.push(x.label)
+        ));
+        this.setState({multipleChoice: {...this.state.multipleChoice,options: newOptions}});
+    }
+
+    createMultipleChoice() {
+        this.widgetService
+            .createExam(this.state.lessonId)
+            .then(exam => {
+                this.widgetService.createMulipleChoiceWidget(this.state.multipleChoice,exam.id)
+            })
+            .then(alert("Multiple Choice widget created"));
     }
 
     /*    addRadioButton = (key) => {
@@ -61,41 +84,31 @@ class MultipleChoiceQuestionWidget extends React.Component {
         };*/
 
     render() {
-        var radio_props = [
-            {label: 'param1', value: 0},
-            {label: 'param2', value: 1}
-        ];
         return (
             <ScrollView>
                 <View>
-                    <RadioForm
-                        radio_props={radio_props}
-                        initial={0}
-                        onPress={(value) => {
-                            this.setState({value: value})
-                        }}
-                    />
-
                     {/*<Button title='+' onPress={() => this.addRadioButton(this.state.radioButton.length)} />*/}
 
                     <FormLabel>Points</FormLabel>
                     <FormInput onChangeText={
-                        text => this.updateForm({points: text})
+                        text => this.updateForm({multipleChoice :{...this.state.multipleChoice,points: text}})
                     } placeholder="Points to be Awarded."/>
 
                     <FormLabel>Title.</FormLabel>
                     <FormInput onChangeText={
-                        text => this.updateForm({title: text})
+                        text => this.updateForm({multipleChoice:{...this.state.multipleChoice,title: text}})
                     } placeholder="Title of the widget."/>
 
                     <FormLabel>Description</FormLabel>
                     <FormInput onChangeText={
-                        text => this.updateForm({description: text})}
+                        text => this.updateForm({multipleChoice:{...this.state.multipleChoice,description: text}})}
                                placeholder="Description of the widget"/>
 
                     <FormLabel>Options</FormLabel>
                     <FormInput multiline
-                               onChangeText={(text) => this.updateOptionsForm({options: text}, text)}
+                               onChangeText={(text) => this.updateOptionsForm
+                               ({multipleChoice: {...this.state.multipleChoice,
+                                       options: text}}, text)}
                                numberOfLines={4}
                                value={this.state.text}
                                placeholder="Each line will be treated as an option. Delete a line to delete the option"
@@ -117,15 +130,19 @@ class MultipleChoiceQuestionWidget extends React.Component {
                             animation={true}
                             style={{alignItems: 'flex-start'}}
                             onPress={(value) => {
-                                this.setState({optionVal: value})
+                                this.setState({multipleChoice: {...this.state.multipleChoice,correctOption: value}})
                             }}
                         />
                     </View>
 
-                    <Button backgroundColor="green"
-                            color="white"
-                            title="Change"
-                            onPress={() => this.change()}/>
+                    <View style={styles.btnContainer}>
+                        <View style={styles.buttonInnerContainer}>
+                            <Button backgroundColor="green"
+                                    color="white"
+                                    title="Add Options"
+                                    onPress={() => this.change()}/>
+                        </View>
+                    </View>
 
                     <View style={styles.btnContainer}>
                         <View style={styles.buttonInnerContainer}>
@@ -133,7 +150,7 @@ class MultipleChoiceQuestionWidget extends React.Component {
                                     backgroundColor="green"
                                     color="white"
                                     title="Save"
-                                    onPress={this.createCourse}
+                                    onPress={this.createMultipleChoice}
                             />
                         </View>
                         <View style={styles.buttonInnerContainer}>
@@ -157,21 +174,25 @@ class MultipleChoiceQuestionWidget extends React.Component {
 
                     <AnimatedHideView visible={this.state.isOnDefaultToggleSwitch}
                                       style={{backgroundColor: 'white', margin: 20}}>
-                        <Text style={styles.points} h5>Points : {this.state.assignment.points} pts</Text>
-                        <Text style={styles.title} h4>{this.state.assignment.title}</Text>
-                        <Text style={styles.description}>Question : {this.state.assignment.description}</Text>
+                        <Text style={styles.points} h5>Points : {this.state.multipleChoice.points} pts</Text>
+                        <Text style={styles.title} h4>{this.state.multipleChoice.title}</Text>
+                        <Text style={styles.description}>Question : {this.state.multipleChoice.description}</Text>
+                        <Text style={styles.description}>Right Choice : {this.state.multipleChoice.correctOption}</Text>
 
-                        <FormLabel>Essay Answer</FormLabel>
-                        <FormInput multiline placeholder="Write your essay answer here...."/>
-
-                        <FormLabel>Essay Answer</FormLabel>
-                        <Button backgroundColor="grey"
-                                color="black"
-                                title="Choose File"
-                                style={styles.btnStyle}/>
-
-                        <FormLabel>Submit a link </FormLabel>
-                        <FormInput placeholder="Paste your link here"/>
+                        <View style={styles.radioContainer}>
+                            <RadioForm
+                                radio_props={this.state.optionsFiltered2}
+                                initial={0}
+                                formHorizontal={false}
+                                labelHorizontal={true}
+                                buttonColor={'#2196f3'}
+                                animation={true}
+                                style={{alignItems: 'flex-start'}}
+                                onPress={(value) => {
+                                    this.setState({userRightChoice: value})
+                                }}
+                            />
+                        </View>
                     </AnimatedHideView>
 
                 </View>

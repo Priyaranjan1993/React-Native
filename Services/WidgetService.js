@@ -3,6 +3,7 @@ const ASSIGNMENT_WIDGET_API_URL = 'http://192.168.0.102:8080/api/lesson/LESSON_I
 const EXAM_WIDGET_API_URL = 'http://192.168.0.102:8080/api/lesson/LESSON_ID/exam';
 const ESSAY_WIDGET_API_URL = 'http://192.168.0.102:8080/api/exam/EXAM_ID/essay';
 const TRUE_FALSE_WIDGET_API_URL = 'http://192.168.0.102:8080/api/exam/EXAM_ID/truefalse';
+const MULTIPLE_CHOICE_WIDGET_API_URL = 'http://192.168.0.102:8080/api/exam/EXAM_ID/choice';
 
 class WidgetService {
     constructor(singletonToken) {
@@ -62,6 +63,19 @@ class WidgetService {
     {
         return fetch(TRUE_FALSE_WIDGET_API_URL.replace('EXAM_ID', examId), {
             body: JSON.stringify(trueFalse),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST'
+        }).then(function (response) {
+            return response.json();
+        })
+    }
+
+    createMulipleChoiceWidget(multipleChoice,examId)
+    {
+        return fetch(MULTIPLE_CHOICE_WIDGET_API_URL.replace('EXAM_ID', examId), {
+            body: JSON.stringify(multipleChoice),
             headers: {
                 'Content-Type': 'application/json'
             },
