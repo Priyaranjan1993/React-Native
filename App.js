@@ -22,11 +22,11 @@ import LessonList from './components/LessonList'
 import WidgetList from './components/WidgetList'
 import QuestionList from './components/QuestionList'
 
-import TrueFalseQuestionEditor from './Elements/TrueFalseQuestionEditor'
 import MultipleChoiceQuestionWidget from './Elements/MultipleChoiceQuestionWidget'
 import QuestionTypePicker from './Elements/QuestionTypePicker'
 import AssignmentWidget from "./Elements/AssignmentWidget";
 import EssayQuestionWidget from "./Elements/EssayQuestionWidget";
+import TrueOrFalseQuestionWidget from "./Elements/TrueOrFalseQuestionWidget";
 
 class Home extends Component {
     static navigationOptions = {title: 'Home'};
@@ -56,10 +56,10 @@ const App = createStackNavigator({
     LessonList,
     WidgetList,
     QuestionList,
-    TrueFalseQuestionEditor,
     MultipleChoiceQuestionWidget,
     AssignmentWidget,
     EssayQuestionWidget,
+    TrueOrFalseQuestionWidget,
     QuestionTypePicker
 });
 

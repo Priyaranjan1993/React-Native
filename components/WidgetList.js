@@ -9,20 +9,22 @@ class WidgetList extends Component {
 
     constructor(props) {
         super(props);
+        const lessonId = this.props.navigation.getParam("lessonId");
         this.state = {
             widgets: [],
             courseId: 1,
             moduleId: 1,
-            widgetType: 'Assignment'
+            widgetType: 'Assignment',
+            lessonId: lessonId
         }
     }
 
     componentDidMount() {
         const {navigation} = this.props;
         const lessonId = navigation.getParam("lessonId");
-        fetch("http://192.168.0.101:8080/api/lesson/" + lessonId + "/widget")
-            .then(response => (response.json()))
-            .then(widgets => this.setState({widgets}))
+        /*        fetch("http://192.168.0.102:8080/api/lesson/" + lessonId + "/widget")
+                    .then(response => (response.json()))
+                    .then(widgets => this.setState({widgets}))*/
     }
 
     render() {
@@ -38,21 +40,24 @@ class WidgetList extends Component {
                     initValue="Select widget type!"
                     onChange={(option) => {
                         this.setState({widgetType: `${option.label}`});
-                        this.props.navigation.navigate("QuestionTypePicker", {widgetType: `${option.label}`});
+                        this.props.navigation.navigate("QuestionTypePicker", {
+                            widgetType: `${option.label}`,
+                            lessonId: this.state.lessonId
+                        });
                     }
                     }/>
 
-                {this.state.widgets.map(
+                    {/*                {this.state.widgets.map(
                     (widget, index) => (
                         <ListItem
                             onPress={() => this.props.navigation
                                 .navigate("QuestionList", {examId: widget.id})}
                             key={index}
                             subtitle={widget.description}
-                            title={widget.title}/>))}
-            </View>
-        )
-    }
-}
+                            title={widget.title}/>))}*/}
+                        </View>
+                        )
+                        }
+                }
 
-export default WidgetList
+                export default WidgetList

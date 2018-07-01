@@ -1,5 +1,5 @@
 import React from 'react'
-import {View, ScrollView, TextInput} from 'react-native'
+import {View, ScrollView, StyleSheet, TextInput} from 'react-native'
 import {Text, Button, CheckBox} from 'react-native-elements'
 import {FormLabel, FormInput, FormValidationMessage} from 'react-native-elements'
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
@@ -18,7 +18,9 @@ class MultipleChoiceQuestionWidget extends React.Component {
             optionsFiltered2: [],
             value: 0,
             counter: 0, arr: [],
-            optionVal: 0
+            optionVal: 0,
+            radioButton: [],
+            isOnDefaultToggleSwitch: false
         };
     }
 
@@ -49,8 +51,14 @@ class MultipleChoiceQuestionWidget extends React.Component {
     }
 
     change() {
-        this.setState({optionsFiltered2 : this.state.arr});
+        this.setState({optionsFiltered2: this.state.arr});
     }
+
+    /*    addRadioButton = (key) => {
+            let radioButton = this.state.optionsFiltered2;
+            radioButton.push(<TextInput key={key} />);
+            this.setState({ radioButton })
+        };*/
 
     render() {
         var radio_props = [
@@ -68,6 +76,8 @@ class MultipleChoiceQuestionWidget extends React.Component {
                         }}
                     />
 
+                    {/*<Button title='+' onPress={() => this.addRadioButton(this.state.radioButton.length)} />*/}
+
                     <FormLabel>Points</FormLabel>
                     <FormInput onChangeText={
                         text => this.updateForm({points: text})
@@ -84,46 +94,129 @@ class MultipleChoiceQuestionWidget extends React.Component {
                                placeholder="Description of the widget"/>
 
                     <FormLabel>Options</FormLabel>
-                    <TextInput
+                    <FormInput multiline
+                               onChangeText={(text) => this.updateOptionsForm({options: text}, text)}
+                               numberOfLines={4}
+                               value={this.state.text}
+                               placeholder="Each line will be treated as an option. Delete a line to delete the option"
+                               containerStyle={{paddingBottom: 30}}/>
+                    {/*<TextInput
                         multiline={true}
                         numberOfLines={4}
                         onChangeText={(text) => this.updateOptionsForm({options: text}, text)}
                         value={this.state.text}
-                        placeholder="Each line will be treated as an option"/>
+                        placeholder="Each line will be treated as an option"/>*/}
 
-                    <RadioForm
-                        radio_props={this.state.optionsFiltered2}
-                        initial={0}
-                        formHorizontal={false}
-                        labelHorizontal={true}
-                        buttonColor={'#2196f3'}
-                        animation={true}
-                        style={{ alignItems: 'flex-start' }}
-                        onPress={(value) => {
-                            this.setState({optionVal: value})
-                        }}
-                    />
+                    <View style={styles.radioContainer}>
+                        <RadioForm
+                            radio_props={this.state.optionsFiltered2}
+                            initial={0}
+                            formHorizontal={false}
+                            labelHorizontal={true}
+                            buttonColor={'#2196f3'}
+                            animation={true}
+                            style={{alignItems: 'flex-start'}}
+                            onPress={(value) => {
+                                this.setState({optionVal: value})
+                            }}
+                        />
+                    </View>
 
                     <Button backgroundColor="green"
                             color="white"
                             title="Change"
                             onPress={() => this.change()}/>
-                    <Button backgroundColor="green"
-                            color="white"
-                            title="Save"/>
-                    <Button backgroundColor="red"
-                            color="white"
-                            title="Cancel"/>
 
-                    <Text h3>Preview</Text>
-                    <Text>{this.state.points}</Text>
-                    <Text h2>{this.state.title}</Text>
-                    <Text>{this.state.description}</Text>
+                    <View style={styles.btnContainer}>
+                        <View style={styles.buttonInnerContainer}>
+                            <Button raised
+                                    backgroundColor="green"
+                                    color="white"
+                                    title="Save"
+                                    onPress={this.createCourse}
+                            />
+                        </View>
+                        <View style={styles.buttonInnerContainer}>
+                            <Button raised
+                                    backgroundColor="red"
+                                    color="white"
+                                    title="Cancel"/>
+                        </View>
+                    </View>
+
+                    <ToggleSwitch
+                        isOn={this.state.isOnDefaultToggleSwitch}
+                        style={styles.lineStyle}
+                        label='Preview'
+                        labelStyle={{color: 'black', fontWeight: '900'}}
+                        size='medium'
+                        onToggle={isOnDefaultToggleSwitch => {
+                            this.setState({isOnDefaultToggleSwitch});
+                        }}
+                    />
+
+                    <AnimatedHideView visible={this.state.isOnDefaultToggleSwitch}
+                                      style={{backgroundColor: 'white', margin: 20}}>
+                        <Text style={styles.points} h5>Points : {this.state.assignment.points} pts</Text>
+                        <Text style={styles.title} h4>{this.state.assignment.title}</Text>
+                        <Text style={styles.description}>Question : {this.state.assignment.description}</Text>
+
+                        <FormLabel>Essay Answer</FormLabel>
+                        <FormInput multiline placeholder="Write your essay answer here...."/>
+
+                        <FormLabel>Essay Answer</FormLabel>
+                        <Button backgroundColor="grey"
+                                color="black"
+                                title="Choose File"
+                                style={styles.btnStyle}/>
+
+                        <FormLabel>Submit a link </FormLabel>
+                        <FormInput placeholder="Paste your link here"/>
+                    </AnimatedHideView>
 
                 </View>
             </ScrollView>
         )
     }
 }
+
+const styles = StyleSheet.create({
+    lineStyle: {
+        position: 'absolute',
+        right: 0
+    },
+    points: {
+        fontWeight: 'bold',
+        paddingRight: 15,
+        paddingTop: 20,
+        paddingLeft: 20
+    },
+    title: {
+        fontWeight: 'bold',
+        paddingLeft: 20
+    },
+    description: {
+        paddingTop: 30,
+        paddingBottom: 40,
+        paddingLeft: 20
+    },
+    btnStyle: {
+        width: 9
+    },
+    btnContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingBottom: 30
+    },
+    buttonInnerContainer: {
+        flex: 1,
+    },
+    radioContainer: {
+        marginLeft: 20,
+        marginBottom: 40
+    }
+});
 
 export default MultipleChoiceQuestionWidget

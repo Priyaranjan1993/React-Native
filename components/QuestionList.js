@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {View, Alert} from 'react-native'
 import {Text, ListItem} from 'react-native-elements'
+import TrueOrFalseQuestionWidget from "../Elements/TrueOrFalseQuestionWidget";
 
 class QuestionList extends Component {
     static navigationOptions = {title: 'Questions'};
@@ -14,7 +15,7 @@ class QuestionList extends Component {
     componentDidMount() {
         const {navigation} = this.props;
         const examId = navigation.getParam("examId");
-        fetch("http://192.168.0.101:8080/api/exam/"+examId+"/question")
+        fetch("http://192.168.0.102:8080/api/exam/"+examId+"/question")
             .then(response => (response.json()))
             .then(questions => this.setState({questions}))
     }
@@ -27,7 +28,7 @@ class QuestionList extends Component {
                             onPress={() => {
                                 if(question.type === "TrueFalse")
                                     this.props.navigation
-                                        .navigate("TrueFalseQuestionEditor", {questionId: question.id});
+                                        .navigate("TrueOrFalseQuestionWidget", {questionId: question.id});
                                 if(question.type === "MultipleChoice")
                                     this.props.navigation
                                         .navigate("MultipleChoiceQuestionWidget", {questionId: question.id})
