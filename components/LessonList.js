@@ -32,7 +32,8 @@ class LessonList extends Component {
                             onPress={() => this.props.navigation
                                 .navigate("WidgetList", {lessonId: lesson.id})}
                             key={index}
-                            title={lesson.title}/>))}
+                            title={lesson.title}
+                            leftIcon={{name: 'subject'}}/>))}
             </View>
             </ScrollView>
         )

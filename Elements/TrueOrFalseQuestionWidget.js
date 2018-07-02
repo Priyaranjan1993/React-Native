@@ -1,5 +1,5 @@
 import React from 'react'
-import {View, ScrollView, TextInput, StyleSheet} from 'react-native'
+import {View, ScrollView, TextInput, StyleSheet,Alert} from 'react-native'
 import {Text, Button, CheckBox} from 'react-native-elements'
 import {FormLabel, FormInput} from 'react-native-elements'
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';

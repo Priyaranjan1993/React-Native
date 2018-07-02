@@ -36,7 +36,8 @@ export default class QuestionTypePicker
             {key: index++, label: 'Fill in the blanks'}
         ];
         if (this.state.widgetType === 'Exam') {
-            return <ModalSelector
+            return <View style={{padding: 15}}>
+                <ModalSelector
                 data={data}
                 initValue="Select Exam type!"
                 onChange={(option) => {
@@ -58,6 +59,7 @@ export default class QuestionTypePicker
                     }
                 }
                 }/>
+            </View>
         }
         else if(this.state.widgetType === "Assignment") {
             return this.props.navigation.navigate("AssignmentWidget",{lessonId:this.state.lessonId});

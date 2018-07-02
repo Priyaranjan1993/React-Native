@@ -4,7 +4,8 @@ import {
     Platform,
     StyleSheet,
     View, StatusBar,
-    ScrollView
+    ScrollView,
+    Alert
 } from 'react-native';
 
 import ToggleSwitch from 'toggle-switch-react-native'
@@ -39,12 +40,9 @@ export default class AssignmentWidget extends Component {
     createCourse() {
         this.widgetService
             .createAssignmentWidget(this.state.assignment, this.state.lessonId)
-            .then(() => {
-                /*                this.findAllCourses();
-                                this.setState({
-                                    course: {title: ''}
-                                });*/
-                alert("Assignment created");
+            .then(() => {this.props.navigation
+                .navigate("WidgetList", {lessonId: this.state.lessonId});
+                Alert.alert("Assignment Created");
             });
     }
 
@@ -81,7 +79,9 @@ export default class AssignmentWidget extends Component {
                             <Button raised
                                     backgroundColor="red"
                                     color="white"
-                                    title="Cancel"/>
+                                    title="Cancel"
+                                    onPress={() => this.props.navigation
+                                        .navigate("WidgetList", {lessonId: this.state.lessonId})}/>
                         </View>
                     </View>
 
@@ -105,7 +105,9 @@ export default class AssignmentWidget extends Component {
                         <Text style={styles.description}>Question : {this.state.assignment.description}</Text>
 
                         <FormLabel>Essay Answer</FormLabel>
-                        <FormInput multiline placeholder="Write your essay answer here...."/>
+                        <FormInput multiline
+                                   numberOfLines={5}
+                                   placeholder="Write your essay answer here...."/>
 
                         <FormLabel>Essay Answer</FormLabel>
                         <Button backgroundColor="grey"

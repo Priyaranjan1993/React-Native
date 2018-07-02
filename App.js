@@ -9,11 +9,10 @@ import {
     Platform,
     StyleSheet,
     View, StatusBar,
-    Button,
     ScrollView
 } from 'react-native';
 import FixedHeader from './Elements/FixedHeader'
-import {Text,Icon, FormLabel, FormInput} from 'react-native-elements'
+import {Button,Text,Icon, FormLabel, FormInput} from 'react-native-elements'
 import {createStackNavigator} from 'react-navigation'
 
 import CourseList from './components/CourseList'
@@ -41,7 +40,9 @@ class Home extends Component {
             <ScrollView>
                 <View>
                     <FixedHeader/>
-                    <Button title="Courses"
+                    <Text style={styles.textContainer} h4>Click the button to see list of courses</Text>
+                    <Button buttonStyle={styles.btnContainer}
+                            title="Courses"
                             onPress={() => this.props.navigation
                                 .navigate('CourseList')}/>
                 </View>
@@ -66,9 +67,17 @@ const App = createStackNavigator({
 });
 
 const styles = StyleSheet.create({
-    lineStyle: {
-        position: 'absolute',
-        right: 0
+    btnContainer: {
+        marginTop:60,
+        backgroundColor: "rgba(92, 99,216, 1)",
+        height: 45,
+        borderColor: "transparent",
+        borderWidth: 0,
+        borderRadius: 5
+    },
+    textContainer:{
+        paddingLeft:20,
+        marginTop:80
     }
 });
 

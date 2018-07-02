@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {View} from 'react-native'
+import {View,ScrollView} from 'react-native'
 import {Text, ListItem} from 'react-native-elements'
 
 class ModuleList extends Component {
@@ -22,6 +22,7 @@ class ModuleList extends Component {
     }
     render() {
         return(
+            <ScrollView>
             <View style={{padding: 15}}>
                 {this.state.modules.map((module, index) => (
                     <ListItem
@@ -29,9 +30,11 @@ class ModuleList extends Component {
                             .navigate("LessonList", {courseId:
                                 this.state.courseId, moduleId: module.id})}
                         key={index}
-                        title={module.title}/>
+                        title={module.title}
+                        leftIcon={{name: 'subject'}}/>
                 ))}
             </View>
+            </ScrollView>
         )
     }
 }
