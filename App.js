@@ -27,6 +27,7 @@ import QuestionTypePicker from './Elements/QuestionTypePicker'
 import AssignmentWidget from "./Elements/AssignmentWidget";
 import EssayQuestionWidget from "./Elements/EssayQuestionWidget";
 import TrueOrFalseQuestionWidget from "./Elements/TrueOrFalseQuestionWidget";
+import FillInTheBlanksQuestionWidget from "./Elements/FillInTheBlanksQuestionWidget";
 
 class Home extends Component {
     static navigationOptions = {title: 'Home'};
@@ -60,6 +61,7 @@ const App = createStackNavigator({
     AssignmentWidget,
     EssayQuestionWidget,
     TrueOrFalseQuestionWidget,
+    FillInTheBlanksQuestionWidget,
     QuestionTypePicker
 });
 

@@ -53,7 +53,7 @@ export default class QuestionTypePicker
                             lessonId:this.state.lessonId});
                     }
                     else if (`${option.label}` === 'Fill in the blanks') {
-                        this.props.navigation.navigate("MultipleChoiceQuestionWidget", {widgetType: `${option.label}`,
+                        this.props.navigation.navigate("FillInTheBlanksQuestionWidget", {widgetType: `${option.label}`,
                             lessonId:this.state.lessonId});
                     }
                 }
