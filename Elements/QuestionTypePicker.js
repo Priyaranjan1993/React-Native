@@ -43,26 +43,26 @@ export default class QuestionTypePicker
                 onChange={(option) => {
                     if (`${option.label}` === 'Multiple Choice') {
                         this.props.navigation.navigate("MultipleChoiceQuestionWidget", {widgetType: `${option.label}`,
-                            lessonId:this.state.lessonId});
+                            lessonId:this.state.lessonId,widgetId:0});
                     }
                     else if (`${option.label}` === 'Essay') {
                         this.props.navigation.navigate("EssayQuestionWidget", {widgetType: `${option.label}`,
-                            lessonId:this.state.lessonId});
+                            lessonId:this.state.lessonId,widgetId:0});
                     }
                     else if (`${option.label}` === 'True or false') {
                         this.props.navigation.navigate("TrueOrFalseQuestionWidget", {widgetType: `${option.label}`,
-                            lessonId:this.state.lessonId});
+                            lessonId:this.state.lessonId,widgetId:0});
                     }
                     else if (`${option.label}` === 'Fill in the blanks') {
                         this.props.navigation.navigate("FillInTheBlanksQuestionWidget", {widgetType: `${option.label}`,
-                            lessonId:this.state.lessonId});
+                            lessonId:this.state.lessonId,widgetId:0});
                     }
                 }
                 }/>
             </View>
         }
         else if(this.state.widgetType === "Assignment") {
-            return this.props.navigation.navigate("AssignmentWidget",{lessonId:this.state.lessonId});
+            return this.props.navigation.navigate("AssignmentWidget",{lessonId:this.state.lessonId,widgetId:0});
         }
     }
 

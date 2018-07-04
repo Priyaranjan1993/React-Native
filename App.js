@@ -28,12 +28,17 @@ import EssayQuestionWidget from "./Elements/EssayQuestionWidget";
 import TrueOrFalseQuestionWidget from "./Elements/TrueOrFalseQuestionWidget";
 import FillInTheBlanksQuestionWidget from "./Elements/FillInTheBlanksQuestionWidget";
 
+
 class Home extends Component {
     static navigationOptions = {title: 'Home'};
 
     constructor(props) {
         super(props);
+        this.state = {
+            btn : 0
+        }
     }
+
 
     render() {
         return (
@@ -45,6 +50,9 @@ class Home extends Component {
                             title="Courses"
                             onPress={() => this.props.navigation
                                 .navigate('CourseList')}/>
+                    <View style={{display: this.state.btn===0 ? 'none' : null }}>
+                        <Text>Hi</Text>
+                    </View>
                 </View>
             </ScrollView>
         )

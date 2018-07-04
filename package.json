@@ -11,6 +11,7 @@
     "react-native": "0.55.4",
     "react-native-animated-hide-view": "^1.0.0",
     "react-native-elements": "^0.19.1",
+    "react-native-file-picker": "0.0.11",
     "react-native-material-textfield": "^0.12.0",
     "react-native-modal-picker": "0.0.16",
     "react-native-modal-selector": "0.0.27",

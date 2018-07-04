@@ -1,5 +1,5 @@
 import React from 'react'
-import {View, ScrollView, StyleSheet, TextInput} from 'react-native'
+import {View, ScrollView, StyleSheet, TextInput, Alert} from 'react-native'
 import {Text, Button, CheckBox} from 'react-native-elements'
 import {FormLabel, FormInput, FormValidationMessage} from 'react-native-elements'
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
@@ -28,7 +28,8 @@ class MultipleChoiceQuestionWidget extends React.Component {
             optionVal: 0,
             radioButton: [],
             userRightChoice:0,
-            multipleChoice: {title: '', points: '', description: '',options:[], correctOption:1},
+            multipleChoice: {title: '', points: '', description: '',options:[],
+                correctOption:1,widgetType:'Exam',type:'MCQ'},
             isOnDefaultToggleSwitch: false
         };
     }
@@ -70,11 +71,14 @@ class MultipleChoiceQuestionWidget extends React.Component {
 
     createMultipleChoice() {
         this.widgetService
-            .createExam(this.state.lessonId)
+            .createExam(this.state.lessonId,this.state.multipleChoice)
             .then(exam => {
                 this.widgetService.createMulipleChoiceWidget(this.state.multipleChoice,exam.id)
             })
-            .then(alert("Multiple Choice widget created"));
+            .then(() => {this.props.navigation
+                .navigate("QuestionTypePicker", {widgetType: 'Exam',lessonId: this.state.lessonId});
+                Alert.alert("Multiple Choices Widget Created");
+            })
     }
 
     /*    addRadioButton = (key) => {
@@ -157,7 +161,10 @@ class MultipleChoiceQuestionWidget extends React.Component {
                             <Button raised
                                     backgroundColor="red"
                                     color="white"
-                                    title="Cancel"/>
+                                    title="Cancel"
+                                    onPress={() => this.props.navigation
+                                        .navigate("QuestionTypePicker", { widgetType: 'Exam',
+                                            lessonId: this.state.lessonId})}/>
                         </View>
                     </View>
 

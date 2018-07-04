@@ -22,7 +22,7 @@ export default class AssignmentWidget extends Component {
         const lessonId = this.props.navigation.getParam("lessonId");
         this.widgetService = WidgetService.instance;
         this.state = {
-            assignment: {title: '', points: '', description: ''},
+            assignment: {title: '', points: '', description: '',widgetType:'Assignment'},
             isOnDefaultToggleSwitch: false,
             lessonId: lessonId,
             points: '',

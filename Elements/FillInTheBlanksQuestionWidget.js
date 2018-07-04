@@ -1,5 +1,5 @@
 import React from 'react'
-import {View, ScrollView, TextInput, StyleSheet} from 'react-native'
+import {View, ScrollView, TextInput, StyleSheet, Alert} from 'react-native'
 import {Text, Button, CheckBox} from 'react-native-elements'
 import {FormLabel, FormInput} from 'react-native-elements'
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
@@ -18,7 +18,8 @@ class FillInTheBlanksQuestionWidget extends React.Component {
         this.widgetService = WidgetService.instance;
         this.state = {
             lessonId: lessonId,
-            fillInTheBlanks: {title: '', points: '', description: '', question:''},
+            fillInTheBlanks: {title: '', points: '', description: '', question:'',
+                widgetType:'Exam',type:'FillInTheBlanks'},
             isOnDefaultToggleSwitch: false
         };
         this.createFillInTheBlanks = this.createFillInTheBlanks.bind(this);
@@ -31,11 +32,14 @@ class FillInTheBlanksQuestionWidget extends React.Component {
 
     createFillInTheBlanks() {
         this.widgetService
-            .createExam(this.state.lessonId)
+            .createExam(this.state.lessonId,this.state.fillInTheBlanks)
             .then(exam => {
                 this.widgetService.createFillInTheBlanksWidget(this.state.fillInTheBlanks,exam.id)
             })
-            .then(alert("Fill in the blanks widget created"));
+            .then(() => {this.props.navigation
+                .navigate("QuestionTypePicker", {widgetType: 'Exam',lessonId: this.state.lessonId});
+                Alert.alert("Fill in the blanks widget Created");
+            })
     }
 
 
@@ -88,7 +92,10 @@ class FillInTheBlanksQuestionWidget extends React.Component {
                             <Button raised
                                     backgroundColor="red"
                                     color="white"
-                                    title="Cancel"/>
+                                    title="Cancel"
+                                    onPress={() => this.props.navigation
+                                        .navigate("QuestionTypePicker", { widgetType: 'Exam',
+                                            lessonId: this.state.lessonId})}/>
                         </View>
                     </View>
 

@@ -10,7 +10,7 @@ import AnimatedHideView from 'react-native-animated-hide-view';
 import WidgetService from '../Services/WidgetService';
 
 class TrueOrFalseQuestionWidget extends React.Component {
-    static navigationOptions = {title: "Essay Question"};
+    static navigationOptions = {title: "True False Question"};
 
     constructor(props) {
         super(props);
@@ -18,7 +18,7 @@ class TrueOrFalseQuestionWidget extends React.Component {
         this.widgetService = WidgetService.instance;
         this.state = {
             lessonId: lessonId,
-            trueFalse: {title: '', points: '', description: '',answer:true},
+            trueFalse: {title: '', points: '', description: '',answer:true,widgetType:'Exam',type:'TrueFalse'},
             isOnDefaultToggleSwitch: false,
             title: '',
             description: '',
@@ -35,11 +35,14 @@ class TrueOrFalseQuestionWidget extends React.Component {
 
     createTrueFalse() {
         this.widgetService
-            .createExam(this.state.lessonId)
+            .createExam(this.state.lessonId,this.state.trueFalse)
             .then(exam => {
                 this.widgetService.createTrueFalseWidget(this.state.trueFalse,exam.id)
             })
-            .then(alert("True or False widget created"));
+            .then(() => {this.props.navigation
+                .navigate("QuestionTypePicker", {widgetType: 'Exam',lessonId: this.state.lessonId});
+                Alert.alert("True or False Widget Created");
+            })
     }
 
 
@@ -96,7 +99,10 @@ class TrueOrFalseQuestionWidget extends React.Component {
                             <Button raised
                                     backgroundColor="red"
                                     color="white"
-                                    title="Cancel"/>
+                                    title="Cancel"
+                                    onPress={() => this.props.navigation
+                                        .navigate("QuestionTypePicker", { widgetType: 'Exam',
+                                            lessonId: this.state.lessonId})}/>
                         </View>
                     </View>
 
