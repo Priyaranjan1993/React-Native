@@ -4,6 +4,9 @@ const EXAM_WIDGET_API_URL = 'http://192.168.43.82:8080/api/lesson/LESSON_ID/exam
 const UPDATE_EXAM_WIDGET_API_URL = 'http://192.168.43.82:8080/api/lesson/exam/WIDGET_ID';
 const ESSAY_WIDGET_API_URL = 'http://192.168.43.82:8080/api/exam/EXAM_ID/essay';
 const UPDATE_ESSAY_WIDGET_API_URL = 'http://192.168.43.82:8080/api/exam/essay/ESSAY_ID';
+const UPDATE_MCQ_WIDGET_API_URL = 'http://192.168.43.82:8080/api/exam/mcq/MCQ_ID';
+const UPDATE_TRUE_FALSE_WIDGET_API_URL = 'http://192.168.43.82:8080/api/exam/essay/TRUE_FALSE_ID';
+const UPDATE_FILL_WIDGET_API_URL = 'http://192.168.43.82:8080/api/exam/fillInTheBlanks/FILL_ID';
 const TRUE_FALSE_WIDGET_API_URL = 'http://192.168.43.82:8080/api/exam/EXAM_ID/truefalse';
 const MULTIPLE_CHOICE_WIDGET_API_URL = 'http://192.168.43.82:8080/api/exam/EXAM_ID/choice';
 const FILL_IN_THE_BLANKS_WIDGET_API_URL = 'http://192.168.43.82:8080/api/exam/EXAM_ID/choice';
@@ -11,6 +14,9 @@ const FETCH_WIDGET_API_URL = 'http://192.168.43.82:8080/api/lesson/LESSON_ID/wid
 const FETCH_WIDGET_TYPE_API_URL = 'http://192.168.43.82:8080/api/lesson/LESSON_ID/widgetType/WIDGET_ID';
 const DELETE_EXAM = 'http://192.168.43.82:8080/api/exam';
 const DELETE_ESSAY = 'http://192.168.43.82:8080/api/essay';
+const DELETE_MCQ = 'http://192.168.43.82:8080/api/choice';
+const DELETE_TRUE_FALSE = 'http://192.168.43.82:8080/api/trueFalse';
+const DELETE_FILL = 'http://192.168.43.82:8080/api/fillInTheBlanks';
 
 
 class WidgetService {
@@ -135,6 +141,28 @@ class WidgetService {
         })
     }
 
+    updateTrueFalse(trueFalse,trueFalseId) {
+        return fetch(UPDATE_TRUE_FALSE_WIDGET_API_URL.replace('TRUE_FALSE_ID',trueFalseId), {
+            body: JSON.stringify(trueFalse),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST'
+        }).then(function (response) {
+            return response.json();
+        })
+    }
+
+    deleteTrueFalseWidget(widgetId)
+    {
+        return fetch(DELETE_TRUE_FALSE + '/' + widgetId,
+            {
+                method: 'DELETE'
+            }).then(function (response) {
+            return response;
+        })
+    }
+
     createMulipleChoiceWidget(multipleChoice, examId) {
         return fetch(MULTIPLE_CHOICE_WIDGET_API_URL.replace('EXAM_ID', examId), {
             body: JSON.stringify(multipleChoice),
@@ -147,6 +175,28 @@ class WidgetService {
         })
     }
 
+    updateEssayMCQ(mcq,mcqId) {
+        return fetch(UPDATE_MCQ_WIDGET_API_URL.replace('MCQ_ID',mcqId), {
+            body: JSON.stringify(mcq),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST'
+        }).then(function (response) {
+            return response.json();
+        })
+    }
+
+    deleteMCQWidget(widgetId)
+    {
+        return fetch(DELETE_MCQ + '/' + widgetId,
+            {
+                method: 'DELETE'
+            }).then(function (response) {
+            return response;
+        })
+    }
+
     createFillInTheBlanksWidget(fillIntheBlanks, examId) {
         return fetch(FILL_IN_THE_BLANKS_WIDGET_API_URL.replace('EXAM_ID', examId), {
             body: JSON.stringify(fillIntheBlanks),
@@ -156,6 +206,28 @@ class WidgetService {
             method: 'POST'
         }).then(function (response) {
             return response.json();
+        })
+    }
+
+    updateFillInTheBlanksWidget(fill,fillId) {
+        return fetch(UPDATE_FILL_WIDGET_API_URL.replace('FILL_ID',fillId), {
+            body: JSON.stringify(fill),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST'
+        }).then(function (response) {
+            return response.json();
+        })
+    }
+
+    deleteFillWidget(widgetId)
+    {
+        return fetch(DELETE_FILL + '/' + widgetId,
+            {
+                method: 'DELETE'
+            }).then(function (response) {
+            return response;
         })
     }
 

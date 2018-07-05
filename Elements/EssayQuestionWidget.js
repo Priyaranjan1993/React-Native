@@ -55,20 +55,6 @@ class EssayQuestionWidget extends React.Component {
             }
             else return null;
         }
-        /*        else {
-                    fetch('http://192.168.0.103:8080/api/question/' + prevState.widgetId)
-                        .then(response => (response.json()))
-                        .then(essay => {
-                            this.updateForm({
-                                essay: {
-                                    ...this.state.essay,
-                                    points: essay.points,
-                                    title: essay.title,
-                                    description: essay.description
-                                }
-                            })
-                        })
-                }*/
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -105,32 +91,9 @@ class EssayQuestionWidget extends React.Component {
             .then(() => {
                 this.props.navigation
                     .navigate("QuestionTypePicker", {widgetType: 'Exam', lessonId: this.state.lessonId});
-                Alert.alert("Essay Widget Created");
+                Alert.alert("Essay Widget Updated");
             })
     }
-
-/*    deleteEssay() {
-        Alert.alert(
-            'Delete',
-            'Do ypu really want to delete the Widget?',
-            [
-                {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                {
-                    text: 'OK', onPress: () => this.widgetService
-                        .deleteExam(this.state.widgetId)
-                        .then(exam => {
-                            this.widgetService.deleteEssayWidget(this.state.widgetId)
-                        })
-                        .then(() => {
-                            this.props.navigation
-                                .navigate("QuestionTypePicker", {widgetType: 'Exam', lessonId: this.state.lessonId});
-                            Alert.alert("Essay Widget Created");
-                        })
-                }
-            ],
-            {cancelable: false}
-        )
-    }*/
 
 
     deleteEssay() {
@@ -180,15 +143,6 @@ class EssayQuestionWidget extends React.Component {
                                value={this.state.essay.description}/>
 
                     <View style={styles.btnContainer}>
-                        {/*<AnimatedHideView visible={this.state.widgetId === 0}
-                                          style={styles.buttonInnerContainer}>
-                            <Button raised
-                                    backgroundColor="green"
-                                    color="white"
-                                    title="Save"
-                                    onPress={this.createEssay}
-                            />
-                        </AnimatedHideView>*/}
                         <View style={[styles.buttonInnerContainer,
                             {display: this.state.widgetId != 0 ? 'none' : null}]}>
                             <Button raised

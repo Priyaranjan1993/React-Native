@@ -34,9 +34,6 @@ class Home extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            btn : 0
-        }
     }
 
 
@@ -50,9 +47,6 @@ class Home extends Component {
                             title="Courses"
                             onPress={() => this.props.navigation
                                 .navigate('CourseList')}/>
-                    <View style={{display: this.state.btn===0 ? 'none' : null }}>
-                        <Text>Hi</Text>
-                    </View>
                 </View>
             </ScrollView>
         )

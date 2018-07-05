@@ -15,9 +15,11 @@ class TrueOrFalseQuestionWidget extends React.Component {
     constructor(props) {
         super(props);
         const lessonId = this.props.navigation.getParam("lessonId");
+        const widgetId = this.props.navigation.getParam("widgetId");
         this.widgetService = WidgetService.instance;
         this.state = {
             lessonId: lessonId,
+            widgetId: widgetId,
             trueFalse: {title: '', points: '', description: '',answer:true,widgetType:'Exam',type:'TrueFalse'},
             isOnDefaultToggleSwitch: false,
             title: '',
@@ -26,6 +28,43 @@ class TrueOrFalseQuestionWidget extends React.Component {
             value: 0
         };
         this.createTrueFalse = this.createTrueFalse.bind(this);
+        this.updateTrueFalse = this.updateTrueFalse.bind(this);
+        this.updateForm = this.updateForm.bind(this);
+        this.deleteTrueFalse = this.deleteTrueFalse.bind(this);
+    }
+
+    componentDidMount() {
+        if (this.state.widgetId != 0) {
+            fetch('http://192.168.43.82:8080/api/question/' + this.state.widgetId)
+                .then(response => (response.json()))
+                .then(trueFalse => {
+                    this.updateForm({
+                        trueFalse: {
+                            ...this.state.trueFalse,
+                            points: trueFalse.points,
+                            title: trueFalse.title,
+                            description: trueFalse.description,
+                            answer : trueFalse.answer
+                        }
+                    })
+                })
+        }
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (prevState.navigation != undefined) {
+            if (nextProps.navigation.getParam("widgetId") !== prevState.navigation.getParam("widgetId")) {
+                return {widgetId: nextProps.navigation.getParam("widgetId")};
+            }
+            else return null;
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.navigation.getParam("widgetId") !== this.props.navigation.getParam("widgetId")) {
+            this.setState({widgetId: this.props.navigation.getParam("widgetId")});
+            console.log("New Widget Id --- " + this.props.navigation.getParam("widgetId"));
+        }
     }
 
 
@@ -36,13 +75,49 @@ class TrueOrFalseQuestionWidget extends React.Component {
     createTrueFalse() {
         this.widgetService
             .createExam(this.state.lessonId,this.state.trueFalse)
-            .then(exam => {
-                this.widgetService.createTrueFalseWidget(this.state.trueFalse,exam.id)
+            .then(trueFalse => {
+                this.widgetService.createTrueFalseWidget(this.state.trueFalse,trueFalse.id)
             })
             .then(() => {this.props.navigation
                 .navigate("QuestionTypePicker", {widgetType: 'Exam',lessonId: this.state.lessonId});
                 Alert.alert("True or False Widget Created");
             })
+    }
+
+    updateTrueFalse() {
+        this.widgetService
+            .updateExam(this.state.trueFalse, this.state.widgetId)
+            .then(trueFalse => {
+                this.widgetService.updateTrueFalse(this.state.trueFalse, this.state.widgetId)
+            })
+            .then(() => {
+                this.props.navigation
+                    .navigate("QuestionTypePicker", {widgetType: 'Exam', lessonId: this.state.lessonId});
+                Alert.alert("True or False Widget Updated");
+            })
+    }
+
+    deleteTrueFalse() {
+        Alert.alert(
+            'Delete',
+            'Do ypu really want to delete the Widget?',
+            [
+                {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                {
+                    text: 'OK', onPress: () => this.widgetService.deleteTrueFalseWidget(this.state.widgetId)
+                        .then(() => {
+                            this.widgetService
+                                .deleteExam(this.state.widgetId)
+                        })
+                        .then(() => {
+                            this.props.navigation
+                                .navigate("QuestionTypePicker", {widgetType: 'Exam', lessonId: this.state.lessonId});
+                            Alert.alert("Essay Widget Deleted");
+                        })
+                }
+            ],
+            {cancelable: false}
+        )
     }
 
 
@@ -74,20 +149,10 @@ class TrueOrFalseQuestionWidget extends React.Component {
                               ({trueFalse :{...this.state.trueFalse,answer: !this.state.trueFalse.answer}})}
                               checked={this.state.trueFalse.answer}/>
 
-                    <ToggleSwitch
-                        isOn={this.state.isOnDefaultToggleSwitch}
-                        style={styles.lineStyle}
-                        label='Preview'
-                        labelStyle={{color: 'black', fontWeight: '900'}}
-                        size='medium'
-                        onToggle={isOnDefaultToggleSwitch => {
-                            this.setState({isOnDefaultToggleSwitch});
-                        }}
-                    />
-
 
                     <View style={styles.btnContainer}>
-                        <View style={styles.buttonInnerContainer}>
+                        <View style={[styles.buttonInnerContainer,
+                            {display: this.state.widgetId != 0 ? 'none' : null}]}>
                             <Button raised
                                     backgroundColor="green"
                                     color="white"
@@ -95,6 +160,27 @@ class TrueOrFalseQuestionWidget extends React.Component {
                                     onPress={this.createTrueFalse}
                             />
                         </View>
+
+                        <View style={[styles.buttonInnerContainer,
+                            {display: this.state.widgetId != 0 ? null : 'none'}]}>
+                            <Button raised
+                                    backgroundColor="green"
+                                    color="white"
+                                    title="Update"
+                                    onPress={this.updateTrueFalse}
+                            />
+                        </View>
+
+                        <View style={[styles.buttonInnerContainer,
+                            {display: this.state.widgetId != 0 ? null : 'none'}]}>
+                            <Button raised
+                                    backgroundColor="red"
+                                    color="white"
+                                    title="Delete"
+                                    onPress={this.deleteTrueFalse}
+                            />
+                        </View>
+
                         <View style={styles.buttonInnerContainer}>
                             <Button raised
                                     backgroundColor="red"
@@ -105,6 +191,17 @@ class TrueOrFalseQuestionWidget extends React.Component {
                                             lessonId: this.state.lessonId})}/>
                         </View>
                     </View>
+
+                    <ToggleSwitch
+                        isOn={this.state.isOnDefaultToggleSwitch}
+                        style={styles.lineStyle}
+                        label='Preview'
+                        labelStyle={{color: 'black', fontWeight: '900'}}
+                        size='medium'
+                        onToggle={isOnDefaultToggleSwitch => {
+                            this.setState({isOnDefaultToggleSwitch});
+                        }}
+                    />
 
 
                     <AnimatedHideView visible={this.state.isOnDefaultToggleSwitch}

@@ -13,10 +13,15 @@ class MultipleChoiceQuestionWidget extends React.Component {
     constructor(props) {
         super(props);
         const lessonId = this.props.navigation.getParam("lessonId");
+        const widgetId = this.props.navigation.getParam("widgetId");
         this.createMultipleChoice = this.createMultipleChoice.bind(this);
+        this.updateMultipleChoice = this.updateMultipleChoice.bind(this);
+        this.updateForm = this.updateForm.bind(this);
+        this.deleteMultipleChoice = this.deleteMultipleChoice.bind(this);
         this.widgetService = WidgetService.instance;
         this.state = {
             lessonId: lessonId,
+            widgetId: widgetId,
             title: '',
             description: '',
             points: 0,
@@ -27,12 +32,85 @@ class MultipleChoiceQuestionWidget extends React.Component {
             counter: 0, arr: [],
             optionVal: 0,
             radioButton: [],
-            userRightChoice:0,
-            multipleChoice: {title: '', points: '', description: '',options:[],
-                correctOption:1,widgetType:'Exam',type:'MCQ'},
+            userRightChoice: 0,
+            multipleChoice: {
+                title: '', points: '', description: '', options: [],
+                correctOption: 1, widgetType: 'Exam', type: 'MCQ'
+            },
             isOnDefaultToggleSwitch: false
         };
     }
+
+    componentDidMount() {
+        if (this.state.widgetId != 0) {
+            fetch('http://192.168.43.82:8080/api/question/' + this.state.widgetId)
+                .then(response => (response.json()))
+                .then(mcq => {
+                    this.updateForm({
+                        multipleChoice: {
+                            ...this.state.multipleChoice,
+                            points: mcq.points,
+                            title: mcq.title,
+                            description: mcq.description,
+                            options: mcq.options
+                        }
+                    })
+                })
+        }
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (prevState.navigation != undefined) {
+            if (nextProps.navigation.getParam("widgetId") !== prevState.navigation.getParam("widgetId")) {
+                return {widgetId: nextProps.navigation.getParam("widgetId")};
+            }
+            else return null;
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.navigation.getParam("widgetId") !== this.props.navigation.getParam("widgetId")) {
+            this.setState({widgetId: this.props.navigation.getParam("widgetId")});
+            console.log("New Widget Id --- " + this.props.navigation.getParam("widgetId"));
+        }
+    }
+
+    updateMCQ() {
+        this.widgetService
+            .updateExam(this.state.multipleChoice, this.state.widgetId)
+            .then(mcq => {
+                this.widgetService.updateEssayMCQ(this.state.multipleChoice, this.state.widgetId)
+            })
+            .then(() => {
+                this.props.navigation
+                    .navigate("QuestionTypePicker", {widgetType: 'Exam', lessonId: this.state.lessonId});
+                Alert.alert("MCQ Widget Updated");
+            })
+    }
+
+    deleteMCQ() {
+        Alert.alert(
+            'Delete',
+            'Do ypu really want to delete the Widget?',
+            [
+                {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                {
+                    text: 'OK', onPress: () => this.widgetService.deleteMCQWidget(this.state.widgetId)
+                        .then(() => {
+                            this.widgetService
+                                .deleteExam(this.state.widgetId)
+                        })
+                        .then(() => {
+                            this.props.navigation
+                                .navigate("QuestionTypePicker", {widgetType: 'Exam', lessonId: this.state.lessonId});
+                            Alert.alert("Essay Widget Deleted");
+                        })
+                }
+            ],
+            {cancelable: false}
+        )
+    }
+
 
     updateForm(newState) {
         this.setState(newState);
@@ -66,26 +144,22 @@ class MultipleChoiceQuestionWidget extends React.Component {
         this.state.arr.map((x) => (
             newOptions.push(x.label)
         ));
-        this.setState({multipleChoice: {...this.state.multipleChoice,options: newOptions}});
+        this.setState({multipleChoice: {...this.state.multipleChoice, options: newOptions}});
     }
 
     createMultipleChoice() {
         this.widgetService
-            .createExam(this.state.lessonId,this.state.multipleChoice)
-            .then(exam => {
-                this.widgetService.createMulipleChoiceWidget(this.state.multipleChoice,exam.id)
+            .createExam(this.state.lessonId, this.state.multipleChoice)
+            .then(mcq => {
+                this.widgetService.createMulipleChoiceWidget(this.state.multipleChoice, mcq.id)
             })
-            .then(() => {this.props.navigation
-                .navigate("QuestionTypePicker", {widgetType: 'Exam',lessonId: this.state.lessonId});
+            .then(() => {
+                this.props.navigation
+                    .navigate("QuestionTypePicker", {widgetType: 'Exam', lessonId: this.state.lessonId});
                 Alert.alert("Multiple Choices Widget Created");
             })
     }
 
-    /*    addRadioButton = (key) => {
-            let radioButton = this.state.optionsFiltered2;
-            radioButton.push(<TextInput key={key} />);
-            this.setState({ radioButton })
-        };*/
 
     render() {
         return (
@@ -95,34 +169,32 @@ class MultipleChoiceQuestionWidget extends React.Component {
 
                     <FormLabel>Points</FormLabel>
                     <FormInput onChangeText={
-                        text => this.updateForm({multipleChoice :{...this.state.multipleChoice,points: text}})
+                        text => this.updateForm({multipleChoice: {...this.state.multipleChoice, points: text}})
                     } placeholder="Points to be Awarded."/>
 
                     <FormLabel>Title.</FormLabel>
                     <FormInput onChangeText={
-                        text => this.updateForm({multipleChoice:{...this.state.multipleChoice,title: text}})
+                        text => this.updateForm({multipleChoice: {...this.state.multipleChoice, title: text}})
                     } placeholder="Title of the widget."/>
 
                     <FormLabel>Description</FormLabel>
                     <FormInput onChangeText={
-                        text => this.updateForm({multipleChoice:{...this.state.multipleChoice,description: text}})}
+                        text => this.updateForm({multipleChoice: {...this.state.multipleChoice, description: text}})}
                                placeholder="Description of the widget"/>
 
                     <FormLabel>Options</FormLabel>
                     <FormInput multiline
                                onChangeText={(text) => this.updateOptionsForm
-                               ({multipleChoice: {...this.state.multipleChoice,
-                                       options: text}}, text)}
+                               ({
+                                   multipleChoice: {
+                                       ...this.state.multipleChoice,
+                                       options: text
+                                   }
+                               }, text)}
                                numberOfLines={4}
                                value={this.state.text}
                                placeholder="Each line will be treated as an option. Delete a line to delete the option"
                                containerStyle={{paddingBottom: 30}}/>
-                    {/*<TextInput
-                        multiline={true}
-                        numberOfLines={4}
-                        onChangeText={(text) => this.updateOptionsForm({options: text}, text)}
-                        value={this.state.text}
-                        placeholder="Each line will be treated as an option"/>*/}
 
                     <View style={styles.radioContainer}>
                         <RadioForm
@@ -134,7 +206,7 @@ class MultipleChoiceQuestionWidget extends React.Component {
                             animation={true}
                             style={{alignItems: 'flex-start'}}
                             onPress={(value) => {
-                                this.setState({multipleChoice: {...this.state.multipleChoice,correctOption: value}})
+                                this.setState({multipleChoice: {...this.state.multipleChoice, correctOption: value}})
                             }}
                         />
                     </View>
@@ -149,7 +221,8 @@ class MultipleChoiceQuestionWidget extends React.Component {
                     </View>
 
                     <View style={styles.btnContainer}>
-                        <View style={styles.buttonInnerContainer}>
+                        <View style={[styles.buttonInnerContainer,
+                            {display: this.state.widgetId != 0 ? 'none' : null}]}>
                             <Button raised
                                     backgroundColor="green"
                                     color="white"
@@ -157,14 +230,38 @@ class MultipleChoiceQuestionWidget extends React.Component {
                                     onPress={this.createMultipleChoice}
                             />
                         </View>
+
+
+                        <View style={[styles.buttonInnerContainer,
+                            {display: this.state.widgetId != 0 ? null : 'none'}]}>
+                            <Button raised
+                                    backgroundColor="green"
+                                    color="white"
+                                    title="Update"
+                                    onPress={this.updateMCQ}
+                            />
+                        </View>
+
+                        <View style={[styles.buttonInnerContainer,
+                            {display: this.state.widgetId != 0 ? null : 'none'}]}>
+                            <Button raised
+                                    backgroundColor="red"
+                                    color="white"
+                                    title="Delete"
+                                    onPress={this.deleteEssay}
+                            />
+                        </View>
+
                         <View style={styles.buttonInnerContainer}>
                             <Button raised
                                     backgroundColor="red"
                                     color="white"
                                     title="Cancel"
                                     onPress={() => this.props.navigation
-                                        .navigate("QuestionTypePicker", { widgetType: 'Exam',
-                                            lessonId: this.state.lessonId})}/>
+                                        .navigate("QuestionTypePicker", {
+                                            widgetType: 'Exam',
+                                            lessonId: this.state.lessonId
+                                        })}/>
                         </View>
                     </View>
 
