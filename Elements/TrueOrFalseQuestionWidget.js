@@ -1,5 +1,5 @@
 import React from 'react'
-import {View, ScrollView, TextInput, StyleSheet,Alert} from 'react-native'
+import {View, ScrollView, TextInput, StyleSheet, Alert} from 'react-native'
 import {Text, Button, CheckBox} from 'react-native-elements'
 import {FormLabel, FormInput} from 'react-native-elements'
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
@@ -20,7 +20,7 @@ class TrueOrFalseQuestionWidget extends React.Component {
         this.state = {
             lessonId: lessonId,
             widgetId: widgetId,
-            trueFalse: {title: '', points: '', description: '',answer:true,widgetType:'Exam',type:'TrueFalse'},
+            trueFalse: {title: '', points: '', description: '', answer: true, widgetType: 'Exam', type: 'TrueFalse'},
             isOnDefaultToggleSwitch: false,
             title: '',
             description: '',
@@ -44,7 +44,7 @@ class TrueOrFalseQuestionWidget extends React.Component {
                             points: trueFalse.points,
                             title: trueFalse.title,
                             description: trueFalse.description,
-                            answer : trueFalse.answer
+                            answer: trueFalse.answer
                         }
                     })
                 })
@@ -74,12 +74,13 @@ class TrueOrFalseQuestionWidget extends React.Component {
 
     createTrueFalse() {
         this.widgetService
-            .createExam(this.state.lessonId,this.state.trueFalse)
+            .createExam(this.state.lessonId, this.state.trueFalse)
             .then(trueFalse => {
-                this.widgetService.createTrueFalseWidget(this.state.trueFalse,trueFalse.id)
+                this.widgetService.createTrueFalseWidget(this.state.trueFalse, trueFalse.id)
             })
-            .then(() => {this.props.navigation
-                .navigate("QuestionTypePicker", {widgetType: 'Exam',lessonId: this.state.lessonId});
+            .then(() => {
+                this.props.navigation
+                    .navigate("WidgetList", {lessonId: this.state.lessonId});
                 Alert.alert("True or False Widget Created");
             })
     }
@@ -92,7 +93,7 @@ class TrueOrFalseQuestionWidget extends React.Component {
             })
             .then(() => {
                 this.props.navigation
-                    .navigate("QuestionTypePicker", {widgetType: 'Exam', lessonId: this.state.lessonId});
+                    .navigate("WidgetList", {lessonId: this.state.lessonId});
                 Alert.alert("True or False Widget Updated");
             })
     }
@@ -100,7 +101,7 @@ class TrueOrFalseQuestionWidget extends React.Component {
     deleteTrueFalse() {
         Alert.alert(
             'Delete',
-            'Do ypu really want to delete the Widget?',
+            'Do you really want to delete the Widget?',
             [
                 {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
                 {
@@ -111,7 +112,7 @@ class TrueOrFalseQuestionWidget extends React.Component {
                         })
                         .then(() => {
                             this.props.navigation
-                                .navigate("QuestionTypePicker", {widgetType: 'Exam', lessonId: this.state.lessonId});
+                                .navigate("WidgetList", {lessonId: this.state.lessonId});
                             Alert.alert("Essay Widget Deleted");
                         })
                 }
@@ -131,23 +132,27 @@ class TrueOrFalseQuestionWidget extends React.Component {
                 <View>
                     <FormLabel>Points</FormLabel>
                     <FormInput onChangeText={
-                        text => this.updateForm({trueFalse :{...this.state.trueFalse,points: text}})
-                    } placeholder="Points to be Awarded."/>
+                        text => this.updateForm({trueFalse: {...this.state.trueFalse, points: text}})
+                    } placeholder="Points to be Awarded."
+                               value={`${this.state.trueFalse.points}`}/>
 
                     <FormLabel>Title</FormLabel>
                     <FormInput onChangeText={
-                        text => this.updateForm({trueFalse :{...this.state.trueFalse,title: text}})
-                    } placeholder="Title of the widget."/>
+                        text => this.updateForm({trueFalse: {...this.state.trueFalse, title: text}})
+                    } placeholder="Title of the widget."
+                               value={this.state.trueFalse.title}/>
 
                     <FormLabel>Description</FormLabel>
                     <FormInput multiline onChangeText={
-                        text => this.updateForm({trueFalse :{...this.state.trueFalse,description: text}})}
-                               placeholder="Description of the widget."/>
+                        text => this.updateForm({trueFalse: {...this.state.trueFalse, description: text}})}
+                               placeholder="Description of the widget."
+                               value={this.state.trueFalse.description}/>
 
-                    <CheckBox title='Answer'
+                    <CheckBox title='True'
                               onPress={() => this.updateForm
-                              ({trueFalse :{...this.state.trueFalse,answer: !this.state.trueFalse.answer}})}
-                              checked={this.state.trueFalse.answer}/>
+                              ({trueFalse: {...this.state.trueFalse, answer: !this.state.trueFalse.answer}})}
+                              checked={this.state.trueFalse.answer}
+                              value={this.state.trueFalse.answer}/>
 
 
                     <View style={styles.btnContainer}>
@@ -187,8 +192,9 @@ class TrueOrFalseQuestionWidget extends React.Component {
                                     color="white"
                                     title="Cancel"
                                     onPress={() => this.props.navigation
-                                        .navigate("QuestionTypePicker", { widgetType: 'Exam',
-                                            lessonId: this.state.lessonId})}/>
+                                        .navigate("WidgetList", {
+                                            lessonId: this.state.lessonId
+                                        })}/>
                         </View>
                     </View>
 
@@ -204,8 +210,8 @@ class TrueOrFalseQuestionWidget extends React.Component {
                     />
 
 
-                    <AnimatedHideView visible={this.state.isOnDefaultToggleSwitch}
-                                      style={{backgroundColor: 'white', margin: 20}}>
+                    <View style={[styles.previewContainer,
+                        {display: this.state.isOnDefaultToggleSwitch ? null : 'none'}]}>
                         <Text style={styles.points} h5>Points : {this.state.trueFalse.points} pts</Text>
                         <Text style={styles.title} h4>{this.state.trueFalse.title}</Text>
                         <Text style={styles.description}>Question : {this.state.trueFalse.description}</Text>
@@ -216,13 +222,13 @@ class TrueOrFalseQuestionWidget extends React.Component {
                             labelHorizontal={true}
                             buttonColor={'#2196f3'}
                             animation={true}
-                            style={{ alignItems: 'flex-start' }}
+                            style={{alignItems: 'flex-start'}}
                             onPress={(value) => {
                                 this.setState({value: value})
                             }}
                         />
 
-                    </AnimatedHideView>
+                    </View>
 
                 </View>
             </ScrollView>
@@ -255,6 +261,10 @@ const styles = StyleSheet.create({
     },
     buttonInnerContainer: {
         flex: 1,
+    },
+    previewContainer: {
+        backgroundColor: 'white',
+        margin: 20
     }
 });
 

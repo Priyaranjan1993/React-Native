@@ -77,7 +77,7 @@ class EssayQuestionWidget extends React.Component {
             })
             .then(() => {
                 this.props.navigation
-                    .navigate("QuestionTypePicker", {widgetType: 'Exam', lessonId: this.state.lessonId});
+                    .navigate("WidgetList", {lessonId: this.state.lessonId});
                 Alert.alert("Essay Widget Created");
             })
     }
@@ -90,7 +90,7 @@ class EssayQuestionWidget extends React.Component {
             })
             .then(() => {
                 this.props.navigation
-                    .navigate("QuestionTypePicker", {widgetType: 'Exam', lessonId: this.state.lessonId});
+                    .navigate("WidgetList", {lessonId: this.state.lessonId});
                 Alert.alert("Essay Widget Updated");
             })
     }
@@ -99,7 +99,7 @@ class EssayQuestionWidget extends React.Component {
     deleteEssay() {
         Alert.alert(
             'Delete',
-            'Do ypu really want to delete the Widget?',
+            'Do you really want to delete the Widget?',
             [
                 {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
                 {
@@ -110,7 +110,7 @@ class EssayQuestionWidget extends React.Component {
                         })
                         .then(() => {
                             this.props.navigation
-                                .navigate("QuestionTypePicker", {widgetType: 'Exam', lessonId: this.state.lessonId});
+                                .navigate("WidgetList", {lessonId: this.state.lessonId});
                             Alert.alert("Essay Widget Deleted");
                         })
                 }
@@ -179,8 +179,7 @@ class EssayQuestionWidget extends React.Component {
                                     color="white"
                                     title="Cancel"
                                     onPress={() => this.props.navigation
-                                        .navigate("QuestionTypePicker", {
-                                            widgetType: 'Exam',
+                                        .navigate("WidgetList", {
                                             lessonId: this.state.lessonId
                                         })}/>
                         </View>
@@ -198,8 +197,8 @@ class EssayQuestionWidget extends React.Component {
                     />
 
 
-                    <AnimatedHideView visible={this.state.isOnDefaultToggleSwitch}
-                                      style={{backgroundColor: 'white', margin: 20}}>
+                    <View style={[styles.previewContainer,
+                        {display: this.state.isOnDefaultToggleSwitch ? null : 'none'}]}>
                         <Text style={styles.points} h5>Points : {this.state.essay.points} pts</Text>
                         <Text style={styles.title} h4>{this.state.essay.title}</Text>
                         <Text style={styles.description}>Question : {this.state.essay.description}</Text>
@@ -209,7 +208,7 @@ class EssayQuestionWidget extends React.Component {
                                    numberOfLines={5}
                                    placeholder="Write your essay answer here...."/>
 
-                    </AnimatedHideView>
+                    </View>
 
                 </View>
             </ScrollView>
@@ -242,6 +241,10 @@ const styles = StyleSheet.create({
     },
     buttonInnerContainer: {
         flex: 1,
+    },
+    previewContainer: {
+        backgroundColor: 'white',
+        margin: 20
     }
 });
 

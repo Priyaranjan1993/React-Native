@@ -45,7 +45,8 @@ class FillInTheBlanksQuestionWidget extends React.Component {
                             points: fillInTheBlanks.points,
                             title: fillInTheBlanks.title,
                             description: fillInTheBlanks.description,
-                            question: fillInTheBlanks.question
+                            question: fillInTheBlanks.question,
+                            variable: fillInTheBlanks.variable
                         }
                     })
                 })
@@ -102,7 +103,7 @@ class FillInTheBlanksQuestionWidget extends React.Component {
             })
             .then(() => {
                 this.props.navigation
-                    .navigate("QuestionTypePicker", {widgetType: 'Exam', lessonId: this.state.lessonId});
+                    .navigate("WidgetList", {lessonId: this.state.lessonId});
                 Alert.alert("Fill in the blanks widget Created");
             })
     }
@@ -115,7 +116,7 @@ class FillInTheBlanksQuestionWidget extends React.Component {
             })
             .then(() => {
                 this.props.navigation
-                    .navigate("QuestionTypePicker", {widgetType: 'Exam', lessonId: this.state.lessonId});
+                    .navigate("WidgetList", {lessonId: this.state.lessonId});
                 Alert.alert("Fill in the Blanks Widget Updated");
             })
     }
@@ -123,7 +124,7 @@ class FillInTheBlanksQuestionWidget extends React.Component {
     deleteFillInTheBlanks() {
         Alert.alert(
             'Delete',
-            'Do ypu really want to delete the Widget?',
+            'Do you really want to delete the Widget?',
             [
                 {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
                 {
@@ -134,7 +135,7 @@ class FillInTheBlanksQuestionWidget extends React.Component {
                         })
                         .then(() => {
                             this.props.navigation
-                                .navigate("QuestionTypePicker", {widgetType: 'Exam', lessonId: this.state.lessonId});
+                                .navigate("WidgetList", {lessonId: this.state.lessonId});
                             Alert.alert("Fill in the Blanks Widget Deleted");
                         })
                 }
@@ -151,22 +152,26 @@ class FillInTheBlanksQuestionWidget extends React.Component {
                     <FormLabel>Points</FormLabel>
                     <FormInput onChangeText={
                         text => this.updateForm({fillInTheBlanks: {...this.state.fillInTheBlanks, points: text}})
-                    } placeholder="Points to be Awarded."/>
+                    } placeholder="Points to be Awarded."
+                               value={`${this.state.fillInTheBlanks.points}`}/>
 
                     <FormLabel>Title</FormLabel>
                     <FormInput onChangeText={
                         text => this.updateForm({fillInTheBlanks: {...this.state.fillInTheBlanks, title: text}})
-                    } placeholder="Title of the widget."/>
+                    } placeholder="Title of the widget."
+                               value={this.state.fillInTheBlanks.title}/>
 
                     <FormLabel>Description</FormLabel>
                     <FormInput multiline onChangeText={
                         text => this.updateForm({fillInTheBlanks: {...this.state.fillInTheBlanks, description: text}})}
-                               placeholder="Description of the widget."/>
+                               placeholder="Description of the widget."
+                               value={this.state.fillInTheBlanks.description}/>
 
                     <FormLabel>Question</FormLabel>
                     <FormInput onChangeText={
                         text => this.modifyQuestion(text)}
-                               placeholder="Eg :- 2 + 2 = [four=4]"/>
+                               placeholder="Eg :- 2 + 2 = [four=4]"
+                               value={this.state.fillInTheBlanks.question}/>
 
                     {/*this.updateForm({fillInTheBlanks :{...this.state.fillInTheBlanks,question: text}})*/}
                     <View style={styles.btnContainer}>
@@ -176,7 +181,7 @@ class FillInTheBlanksQuestionWidget extends React.Component {
                                     backgroundColor="green"
                                     color="white"
                                     title="Save"
-                                    onPress={this.createTrueFalse}
+                                    onPress={this.createFillInTheBlanks}
                             />
                         </View>
 
@@ -208,8 +213,7 @@ class FillInTheBlanksQuestionWidget extends React.Component {
                                     color="white"
                                     title="Cancel"
                                     onPress={() => this.props.navigation
-                                        .navigate("QuestionTypePicker", {
-                                            widgetType: 'Exam',
+                                        .navigate("WidgetList", {
                                             lessonId: this.state.lessonId
                                         })}/>
                         </View>
@@ -227,14 +231,15 @@ class FillInTheBlanksQuestionWidget extends React.Component {
                     />
 
 
-                    <AnimatedHideView visible={this.state.isOnDefaultToggleSwitch}
-                                      style={{backgroundColor: 'white', margin: 20}}>
+                    <View style={[styles.previewContainer,
+                        {display: this.state.isOnDefaultToggleSwitch ? null : 'none'}]}>
                         <Text style={styles.points} h5>Points : {this.state.fillInTheBlanks.points} pts</Text>
                         <Text style={styles.title} h4>{this.state.fillInTheBlanks.title}</Text>
                         <Text style={styles.description}>Description : {this.state.fillInTheBlanks.description}</Text>
-                        <Text>Question : {this.state.fillInTheBlanks.question.replace(/\[([^\]]+)\]/g, '[         ]')}</Text>
+                        <Text style={styles.description}>Question
+                            : {this.state.fillInTheBlanks.question.replace(/\[([^\]]+)\]/g, '[         ]')}</Text>
 
-                    </AnimatedHideView>
+                    </View>
 
                 </View>
             </ScrollView>
@@ -267,6 +272,10 @@ const styles = StyleSheet.create({
     },
     buttonInnerContainer: {
         flex: 1,
+    },
+    previewContainer: {
+        backgroundColor: 'white',
+        margin: 20
     }
 });
 

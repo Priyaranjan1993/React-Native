@@ -20,16 +20,54 @@ export default class AssignmentWidget extends Component {
     constructor(props) {
         super(props);
         const lessonId = this.props.navigation.getParam("lessonId");
+        const widgetId = this.props.navigation.getParam("widgetId");
         this.widgetService = WidgetService.instance;
         this.state = {
-            assignment: {title: '', points: '', description: '',widgetType:'Assignment'},
+            assignment: {title: '', points: '', description: '', widgetType: 'Assignment'},
             isOnDefaultToggleSwitch: false,
+            widgetId: widgetId,
             lessonId: lessonId,
             points: '',
             description: '',
             title: ''
         };
         this.createCourse = this.createCourse.bind(this);
+        this.updateCourse = this.updateCourse.bind(this);
+        this.updateForm = this.updateForm.bind(this);
+        this.deleteCourse = this.deleteCourse.bind(this);
+    }
+
+    componentDidMount() {
+        if (this.state.widgetId != 0) {
+            fetch('http://192.168.43.82:8080/api/assignment/' + this.state.widgetId)
+                .then(response => (response.json()))
+                .then(assignment => {
+                    this.updateForm({
+                        assignment: {
+                            ...this.state.assignment,
+                            points: assignment.points,
+                            title: assignment.title,
+                            description: assignment.description
+                        }
+                    })
+                })
+        }
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (prevState.navigation != undefined) {
+            if (nextProps.navigation.getParam("widgetId") !== prevState.navigation.getParam("widgetId")) {
+                return {widgetId: nextProps.navigation.getParam("widgetId")};
+            }
+            else return null;
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.navigation.getParam("widgetId") !== this.props.navigation.getParam("widgetId")) {
+            this.setState({widgetId: this.props.navigation.getParam("widgetId")});
+            console.log("New Widget Id --- " + this.props.navigation.getParam("widgetId"));
+        }
     }
 
     updateForm(newState) {
@@ -40,10 +78,42 @@ export default class AssignmentWidget extends Component {
     createCourse() {
         this.widgetService
             .createAssignmentWidget(this.state.assignment, this.state.lessonId)
-            .then(() => {this.props.navigation
-                .navigate("WidgetList", {lessonId: this.state.lessonId});
+            .then(() => {
+                this.props.navigation
+                    .navigate("WidgetList", {lessonId: this.state.lessonId});
                 Alert.alert("Assignment Created");
             });
+    }
+
+
+    updateCourse() {
+        this.widgetService
+            .updateAssignment(this.state.assignment, this.state.widgetId)
+            .then(() => {
+                this.props.navigation
+                    .navigate("WidgetList", {lessonId: this.state.lessonId});
+                Alert.alert("Essay Widget Updated");
+            })
+    }
+
+    deleteCourse() {
+        Alert.alert(
+            'Delete',
+            'Do you really want to delete the Widget?',
+            [
+                {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                {
+                    text: 'OK', onPress: () => this.widgetService.deleteAssignment(this.state.widgetId)
+                        .then(() => {
+
+                            this.props.navigation
+                                .navigate("WidgetList", {lessonId: this.state.lessonId});
+                            Alert.alert("Essay Widget Deleted");
+                        })
+                }
+            ],
+            {cancelable: false}
+        )
     }
 
     render() {
@@ -52,22 +122,26 @@ export default class AssignmentWidget extends Component {
                 <View>
                     <FormLabel>Points</FormLabel>
                     <FormInput onChangeText={
-                        text => this.updateForm({assignment: {...this.state.assignment,points: text}})
-                    } placeholder="Points to be Awarded"/>
+                        text => this.updateForm({assignment: {...this.state.assignment, points: text}})
+                    } placeholder="Points to be Awarded"
+                               value={`${this.state.assignment.points}`}/>
 
                     <FormLabel>Title.</FormLabel>
                     <FormInput onChangeText={
-                        text => this.updateForm({assignment: {...this.state.assignment,title: text}})
-                    } placeholder="Title of the widget"/>
+                        text => this.updateForm({assignment: {...this.state.assignment, title: text}})
+                    } placeholder="Title of the widget"
+                               value={this.state.assignment.title}/>
 
                     <FormLabel>Description</FormLabel>
                     <FormInput multiline onChangeText={
-                        text => this.updateForm({assignment: {...this.state.assignment,description: text}})}
+                        text => this.updateForm({assignment: {...this.state.assignment, description: text}})}
                                placeholder="Description of the widget"
-                               containerStyle={{paddingBottom: 30}}/>
+                               containerStyle={{paddingBottom: 30}}
+                               value={this.state.assignment.description}/>
 
                     <View style={styles.btnContainer}>
-                        <View style={styles.buttonInnerContainer}>
+                        <View style={[styles.buttonInnerContainer,
+                            {display: this.state.widgetId != 0 ? 'none' : null}]}>
                             <Button raised
                                     backgroundColor="green"
                                     color="white"
@@ -75,6 +149,27 @@ export default class AssignmentWidget extends Component {
                                     onPress={this.createCourse}
                             />
                         </View>
+
+                        <View style={[styles.buttonInnerContainer,
+                            {display: this.state.widgetId != 0 ? null : 'none'}]}>
+                            <Button raised
+                                    backgroundColor="green"
+                                    color="white"
+                                    title="Update"
+                                    onPress={this.updateCourse}
+                            />
+                        </View>
+
+                        <View style={[styles.buttonInnerContainer,
+                            {display: this.state.widgetId != 0 ? null : 'none'}]}>
+                            <Button raised
+                                    backgroundColor="red"
+                                    color="white"
+                                    title="Delete"
+                                    onPress={this.deleteCourse}
+                            />
+                        </View>
+
                         <View style={styles.buttonInnerContainer}>
                             <Button raised
                                     backgroundColor="red"
@@ -97,9 +192,8 @@ export default class AssignmentWidget extends Component {
                         }}
                     />
 
-
-                    <AnimatedHideView visible={this.state.isOnDefaultToggleSwitch}
-                                      style={{backgroundColor: 'white', margin: 20}}>
+                    <View style={[styles.previewContainer,
+                        {display: this.state.isOnDefaultToggleSwitch ? null : 'none'}]}>
                         <Text style={styles.points} h5>Points : {this.state.assignment.points} pts</Text>
                         <Text style={styles.title} h4>{this.state.assignment.title}</Text>
                         <Text style={styles.description}>Question : {this.state.assignment.description}</Text>
@@ -117,8 +211,8 @@ export default class AssignmentWidget extends Component {
 
                         <FormLabel>Submit a link </FormLabel>
                         <FormInput placeholder="Paste your link here"/>
-                    </AnimatedHideView>
 
+                    </View>
 
                 </View>
             </ScrollView>
@@ -158,5 +252,9 @@ const styles = StyleSheet.create({
     },
     buttonInnerContainer: {
         flex: 1,
+    },
+    previewContainer: {
+        backgroundColor: 'white',
+        margin: 20
     }
 });
