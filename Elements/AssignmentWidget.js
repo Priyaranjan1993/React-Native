@@ -39,7 +39,7 @@ export default class AssignmentWidget extends Component {
 
     componentDidMount() {
         if (this.state.widgetId != 0) {
-            fetch('http://192.168.43.82:8080/api/assignment/' + this.state.widgetId)
+            fetch('https://peaceful-inlet-41065.herokuapp.com/api/assignment/' + this.state.widgetId)
                 .then(response => (response.json()))
                 .then(assignment => {
                     this.updateForm({

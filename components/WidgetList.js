@@ -50,12 +50,12 @@ class WidgetList extends Component {
         console.log(widget);
         var str;
 
-        fetch('http://192.168.43.82:8080/api/lesson/' + this.state.lessonId + '/widgetType/' + widget.id)
+        fetch('https://peaceful-inlet-41065.herokuapp.com/api/lesson/' + this.state.lessonId + '/widgetType/' + widget.id)
             .then(response => (response.json()))
             .then(widType => {
                     if(widType.widgetType === 'Exam')
                     {
-                        fetch('http://192.168.43.82:8080/api/lesson/widgetType/' + widType.id)
+                        fetch('https://peaceful-inlet-41065.herokuapp.com/api/lesson/widgetType/' + widType.id)
                             .then(response => (response.json()))
                             .then(text => {
                                 console.log(text[0]);

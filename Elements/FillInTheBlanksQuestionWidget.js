@@ -36,7 +36,7 @@ class FillInTheBlanksQuestionWidget extends React.Component {
 
     componentDidMount() {
         if (this.state.widgetId != 0) {
-            fetch('http://192.168.43.82:8080/api/question/' + this.state.widgetId)
+            fetch('https://peaceful-inlet-41065.herokuapp.com/api/question/' + this.state.widgetId)
                 .then(response => (response.json()))
                 .then(fillInTheBlanks => {
                     this.updateForm({
