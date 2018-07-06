@@ -53,7 +53,8 @@ class MultipleChoiceQuestionWidget extends React.Component {
                             points: mcq.points,
                             title: mcq.title,
                             description: mcq.description,
-                            options: mcq.options
+                            options: mcq.options,
+                            correctOption:mcq.correctOption
                         }
                     });
                     this.updateForm({arr : mcq.options});
@@ -87,7 +88,7 @@ class MultipleChoiceQuestionWidget extends React.Component {
             .then(() => {
                 this.props.navigation
                     .navigate("WidgetList", {lessonId: this.state.lessonId});
-                Alert.alert("MCQ Widget Updated");
+                Alert.alert("Multiple Choices Widget Updated");
             })
     }
 
@@ -106,7 +107,7 @@ class MultipleChoiceQuestionWidget extends React.Component {
                         .then(() => {
                             this.props.navigation
                                 .navigate("WidgetList", {lessonId: this.state.lessonId});
-                            Alert.alert("Essay Widget Deleted");
+                            Alert.alert("Multiple Choices Widget Deleted");
                         })
                 }
             ],
@@ -217,6 +218,9 @@ class MultipleChoiceQuestionWidget extends React.Component {
                             }}
                         />
                     </View>
+
+                    <Text style={styles.description}>Right Choice : {this.state.multipleChoice.correctOption}
+                    (** 1 means first choice and so on....)</Text>
 
                     <View style={styles.btnContainer}>
                         <View style={styles.buttonInnerContainer}>

@@ -113,7 +113,7 @@ class TrueOrFalseQuestionWidget extends React.Component {
                         .then(() => {
                             this.props.navigation
                                 .navigate("WidgetList", {lessonId: this.state.lessonId});
-                            Alert.alert("Essay Widget Deleted");
+                            Alert.alert("True or False Widget Deleted");
                         })
                 }
             ],
