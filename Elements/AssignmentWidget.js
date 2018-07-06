@@ -92,7 +92,7 @@ export default class AssignmentWidget extends Component {
             .then(() => {
                 this.props.navigation
                     .navigate("WidgetList", {lessonId: this.state.lessonId});
-                Alert.alert("Essay Widget Updated");
+                Alert.alert("Assignment Widget Updated");
             })
     }
 
@@ -108,7 +108,7 @@ export default class AssignmentWidget extends Component {
 
                             this.props.navigation
                                 .navigate("WidgetList", {lessonId: this.state.lessonId});
-                            Alert.alert("Essay Widget Deleted");
+                            Alert.alert("Assignment Widget Deleted");
                         })
                 }
             ],
